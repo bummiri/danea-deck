@@ -80,13 +80,53 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
    유리의 빛(::before)과 테두리(::after) 아래에 깔려서 유리 너머로 비친다 */
 .card > .glow{position:absolute;inset:0;z-index:0;border-radius:inherit;
   overflow:hidden;pointer-events:none}
-.glow::before,.glow::after{content:"";position:absolute;display:block}
+.glow::before,.glow::after{content:"";position:absolute;display:block;
+  will-change:transform,opacity}
 .glow::before{width:150%;height:128%;left:-20%;top:-40%;filter:blur(24px);
   background:radial-gradient(closest-side,
-    rgba(255,150,38,.62), rgba(255,150,38,.18) 52%, rgba(255,150,38,0) 76%)}
+    rgba(255,150,38,.62), rgba(255,150,38,.18) 52%, rgba(255,150,38,0) 76%);
+  animation:liqA 21s ease-in-out infinite}
 .glow::after{width:128%;height:108%;right:-30%;bottom:-34%;filter:blur(26px);
   background:radial-gradient(closest-side,
-    rgba(255,104,0,.34), rgba(255,104,0,.09) 54%, rgba(255,104,0,0) 76%)}
+    rgba(255,104,0,.34), rgba(255,104,0,.09) 54%, rgba(255,104,0,0) 76%);
+  animation:liqB 26s ease-in-out infinite}
+
+/* 🔒 「유리의 비친 뒤에도 같이 일렁거리게」
+   유리에 비친 빛 한 줄. 주황 위를 비스듬히 쓸고 지나간다.
+   soft-light 라서 주황을 덮지 않고 머금어 밝힌다 */
+.glow i{position:absolute;display:block;left:-26%;top:-34%;width:106%;height:168%;
+  background:linear-gradient(104deg,
+    rgba(255,255,255,0) 34%,
+    rgba(255,238,214,.50) 45%,
+    rgba(255,255,255,.74) 50%,
+    rgba(255,232,200,.34) 55%,
+    rgba(255,255,255,0) 66%);
+  filter:blur(9px);mix-blend-mode:soft-light;
+  will-change:transform,opacity;
+  animation:liqC 17s ease-in-out infinite}
+
+/* 🔵 주기가 21·26·17·13 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다 */
+@keyframes liqA{
+  0%  {transform:translate3d(0,0,0) scale(1);opacity:.92}
+  28% {transform:translate3d(5.5%,3.5%,0) scale(1.07);opacity:1}
+  56% {transform:translate3d(-3%,6.5%,0) scale(.97);opacity:.84}
+  80% {transform:translate3d(-5.5%,-2.5%,0) scale(1.04);opacity:.96}
+  100%{transform:translate3d(0,0,0) scale(1);opacity:.92}}
+@keyframes liqB{
+  0%  {transform:translate3d(0,0,0) scale(1);opacity:.86}
+  32% {transform:translate3d(-6%,-4%,0) scale(1.09);opacity:1}
+  61% {transform:translate3d(4%,-6%,0) scale(.95);opacity:.76}
+  84% {transform:translate3d(6%,3%,0) scale(1.05);opacity:.9}
+  100%{transform:translate3d(0,0,0) scale(1);opacity:.86}}
+@keyframes liqC{
+  0%  {transform:translate3d(-15%,9%,0) rotate(-6deg);opacity:0}
+  20% {opacity:.52}
+  50% {transform:translate3d(11%,-7%,0) rotate(5deg);opacity:.78}
+  80% {opacity:.44}
+  100%{transform:translate3d(-15%,9%,0) rotate(-6deg);opacity:0}}
+@keyframes liqS{
+  0%,100%{opacity:.64}
+  50%    {opacity:1}}
 
 /* 표면을 비스듬히 스치는 긴 하이라이트 한 줄 */
 .card::before{content:"";position:absolute;inset:0;z-index:1;
@@ -97,7 +137,8 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
     rgba(255,255,255,.52) 42%,
     rgba(255,255,255,.16) 47%,
     rgba(255,255,255,0) 56%);
-  opacity:.9;mix-blend-mode:soft-light}
+  opacity:.9;mix-blend-mode:soft-light;
+  animation:liqS 13s ease-in-out infinite}
 
 /* 테두리 선. 빛 드는 쪽만 살고 반대쪽은 사라진다 */
 .card::after{content:"";position:absolute;inset:0;z-index:2;
@@ -185,7 +226,8 @@ button:disabled{opacity:.55;cursor:default}
 .msg.wait{color:var(--ink-3)}
 
 @media (prefers-reduced-motion:reduce){
-  .card{animation:none}
+  .card,.mark,.card::before,.glow::before,.glow::after,.glow i{animation:none}
+  .glow i{opacity:.4;transform:none}
   *{transition:none!important}
 }
 </style>
@@ -196,7 +238,7 @@ button:disabled{opacity:.55;cursor:default}
 <img class="mark" src="logo.png" alt="DANEA">
 
 <main class="card">
-  <span class="glow" aria-hidden="true"></span>
+  <span class="glow" aria-hidden="true"><i></i></span>
   <img class="logo" src="logo.png" alt="DANEA">
   <p class="say">소개서 열람을 위해<br>전달받은 비밀번호를 입력해주세요</p>
   <form id="f" autocomplete="off">
