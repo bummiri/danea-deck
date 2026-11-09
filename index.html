@@ -81,8 +81,15 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
 /* 🔵🔵 움직이지 않는 따뜻한 바탕. 웅덩이가 멀리 가 있어도 카드가 밋밋해지지 않는다 */
 .card > .glow{position:absolute;inset:0;z-index:0;border-radius:inherit;
   overflow:hidden;pointer-events:none;
-  background:radial-gradient(128% 104% at 50% 2%,
-    rgba(255,150,38,.30), rgba(255,150,38,.11) 54%, rgba(255,150,38,0) 86%)}
+  /* 🔒 11/09 대표 「배경에만 주황색 그라디언트」
+     유리는 뒤에 있는 것을 보여 준다. 그러니 버튼이 앉는 아래쪽까지 주황이 와야
+     버튼이 유리로 보인다. 전에는 위쪽에만 몰려 있었다 */
+  background:
+    radial-gradient(116% 92% at 50% 4%,
+      rgba(255,150,38,.34), rgba(255,150,38,.16) 56%, rgba(255,150,38,.05) 88%),
+    linear-gradient(168deg,
+      rgba(255,164,56,.06) 0%, rgba(255,140,24,.15) 52%,
+      rgba(246,120,10,.21) 78%, rgba(232,104,2,.25) 100%)}
 
 /* 🔴🔴 전에는 150% x 128% 였다. 카드보다 커서 화면을 꽉 채우니
    아무리 옮겨도 그림이 그대로였다. 카드보다 작게 줄여야 「돌아다니는」 게 보인다 */
@@ -212,15 +219,23 @@ input:focus{background:linear-gradient(to bottom,rgba(255,255,255,.88),rgba(255,
    틴트만 주황으로 바꾸고 테두리(rim)와 굴절은 손대지 않는다.
    🔴 알파는 .55 → .42 두 칸뿐이다. 더 칠하면 뒤에서 오는 색과 싸워 탁해진다
    🔴 rim 을 빼면 「반투명한 평평한 버튼」이 된다. 반드시 같이 쓴다 */
+/* 🔒 11/09 대표 「버튼쪽에는 주황색 최대한 없애고 레시피대로 유리처럼」
+   스킬 규칙 2 : 틴트는 **무색**이다. 흰색 → 70% 회색, 알파 6%.
+   색을 넣으면 뒤에서 오는 색과 싸워 탁해진다(그게 「쇠 재질」의 정체였다).
+   색은 전부 뒤에서 온다. 유리는 테두리와 굴절로만 유리가 된다 */
 button{position:relative;cursor:pointer;letter-spacing:-.015em;font-weight:600;
-  color:#3A1A02;
-  background:linear-gradient(155deg, rgba(255,150,26,.55), rgba(222,92,6,.42));
+  color:#2E1603;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(179,179,179,.06));
   box-shadow:
-    0 12px 28px rgba(190,76,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.52),
+    /* 떠 있다 */
+    0 10px 30px rgba(74,42,10,.16),
+    0 2px 6px rgba(74,42,10,.08),
+    /* 테두리 세 줄. 이게 없으면 「반투명한 평평한 버튼」이 된다 */
+    inset 0 1px 0 rgba(255,255,255,.62),
     inset 0 0 0 1px rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(255,196,140,.22);
-  /* 굴절이 안 되는 브라우저용 대비책. 켜지면 아래 .lens 규칙이 통째로 덮는다 */
+    inset 0 -1px 0 rgba(255,255,255,.10),
+    inset 0 0 0 1px rgba(92,56,20,.10);
+  /* 굴절이 안 되는 브라우저용 대비책. 켜지면 .lens 규칙이 통째로 덮는다 */
   -webkit-backdrop-filter:blur(3px) saturate(125%);
   backdrop-filter:blur(3px) saturate(125%)}
 
@@ -230,12 +245,14 @@ button::after{content:"";position:absolute;inset:0;border-radius:inherit;
   background:linear-gradient(118deg,rgba(255,255,255,0) 32%,
     rgba(255,255,255,.14) 42%,rgba(255,255,255,0) 52%)}
 button:hover:not(:disabled){transform:translateY(-2px);
-  background:linear-gradient(155deg, rgba(255,164,44,.62), rgba(230,100,10,.50));
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(179,179,179,.12));
   box-shadow:
-    0 16px 34px rgba(190,76,0,.40),
-    inset 0 1px 0 rgba(255,255,255,.66),
-    inset 0 0 0 1px rgba(255,255,255,.20),
-    inset 0 -1px 0 rgba(255,196,140,.26)}
+    0 16px 36px rgba(74,42,10,.20),
+    0 3px 8px rgba(74,42,10,.10),
+    inset 0 1px 0 rgba(255,255,255,.78),
+    inset 0 0 0 1px rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(255,255,255,.14),
+    inset 0 0 0 1px rgba(92,56,20,.10)}
 button:active:not(:disabled){transform:translateY(0) scale(.992)}
 button:disabled{opacity:.55;cursor:default}
 
