@@ -11,108 +11,65 @@
 
 :root{
   color-scheme:light;
-  --ink:#15120F; --ink-2:#36302A; --ink-3:#7E756C;
-  --brand:#FF8C00;
-  --rim:rgba(255,255,255,.72);
-  --hair:rgba(21,18,15,.08);
+  /* 🔒 11/09 글씨는 전부 흰색이 되었다 */
+  --ink:#FFFFFF;
+  --ink-2:rgba(255,255,255,.90);
+  --ink-3:rgba(255,255,255,.68);
   --ease:cubic-bezier(.32,.72,0,1);
   --ease-out:cubic-bezier(.23,1,.32,1);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:#F3EFEA;color:var(--ink);
+body{margin:0;background:#C64A0A;color:var(--ink);
   font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
   -webkit-font-smoothing:antialiased;
   min-height:100dvh;display:grid;place-items:center;
-  /* 🔴 두 값 축약(세로 가로)이라 위아래에 left 값이 들어가 있었다. 네 값으로 또박또박 쓴다 */
+  /* 🔴 두 값 축약(세로 가로)이면 위아래에 left 값이 들어간다. 네 값으로 또박또박 */
   padding:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px))
           max(20px,env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
   overflow:hidden}
 
-/* ---- 바탕. 🔒 11/09 대표 「가운데 로그인창 빼고 주변 색깔 있는 건 모두 없애자」
-   → 주황 덩어리는 전부 뺐다. 색 없는 은은한 그라디언트와 아주 옅은 비네트만 남긴다 ---- */
+/* ═══ 바탕 = 주황 그라디언트 ════════════════════════════════════
+   🔒 11/09 대표 「배경만 오렌지색 그라디언트로 비춰서 보이는거야」
+   사진(iOS 26 제어센터)은 색이 전부 유리 **뒤**에 있다. 그래서 주황을
+   카드 밖으로 꺼냈다. 유리는 그 위에 얹혀 뒤를 비추고 꺾는다 */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(118% 94% at 50% 6%,
-    #FCFBF9 0%, #F5F2ED 42%, #EBE7E0 74%, #DFDAD2 100%)}
-/* 가운데가 살짝 떠 보이게만 하는 비네트 */
-.bg::after{content:"";position:absolute;inset:0;
-  background:radial-gradient(74% 60% at 50% 50%,
-    rgba(0,0,0,0) 46%, rgba(72,62,50,.055) 78%, rgba(72,62,50,.10) 100%)}
+  background:
+    /* ③ 고운 결. 평소엔 거의 안 보이다가 유리 가장자리에서 꺾일 때 드러난다 */
+    repeating-linear-gradient(37deg,
+      rgba(92,26,0,.075) 0px, rgba(92,26,0,.075) 9px,
+      rgba(255,255,255,0) 21px, rgba(255,255,255,0) 33px,
+      rgba(255,216,154,.06) 44px, rgba(255,216,154,0) 60px),
+    /* ② 가운데를 깊게 눌러 흰 글씨가 읽히는 자리를 만든다 */
+    radial-gradient(78% 62% at 50% 50%,
+      rgba(80,22,0,.70), rgba(80,22,0,.30) 56%, rgba(80,22,0,0) 86%),
+    /* ① 바탕 */
+    radial-gradient(132% 102% at 50% -8%,
+      #FFBE4D 0%, #FF9226 26%, #F56C0B 50%, #C64A0A 78%, #8A3005 100%)}
 
-/* 🔵🔵 11/09 body 높이에 기대어 가운데를 잡으면 상황에 따라 어긋난다.
-   position:fixed + inset:0 + margin:auto 로 뷰포트에 직접 못 박는다.
-   가로·세로 둘 다 가운데로 가고, 스크롤이나 본문 높이와 아무 상관이 없다 */
-.card{position:fixed;inset:0;margin:auto;height:fit-content;
-  z-index:1;width:min(366px,calc(100% - 40px));
-  padding:clamp(30px,4.6vw,42px) clamp(22px,3.8vw,32px) clamp(24px,3.6vw,31px);
-  border-radius:28px;text-align:center;border:0;isolation:isolate;
-  /* 🔵🔵 유리로 보이게 하는 건 뒤가 아니라 이 기울기다.
-     왼쪽 위는 빛을 받아 밝고, 오른쪽 아래로 갈수록 따뜻한 어둠을 머금는다.
-     유리는 밝히기만 하지 않는다. 머금어 어둡게도 한다 */
-  background:linear-gradient(143deg,
-    rgba(255,255,255,.62) 0%,
-    rgba(255,255,255,.30) 20%,
-    rgba(255,255,255,.11) 42%,
-    rgba(255,255,255,.02) 58%,
-    rgba(124,94,62,.09) 78%,
-    rgba(96,70,44,.17) 100%);
-  -webkit-backdrop-filter:blur(20px) saturate(152%);
-  backdrop-filter:blur(20px) saturate(152%);
-  box-shadow:
-    /* 빛이 들어오는 위·왼쪽 모서리만 밝다 */
-    inset 0 1.7px 0 rgba(255,255,255,.96),
-    inset 1.7px 0 0 rgba(255,255,255,.74),
-    /* 반대쪽 모서리는 떨어진다. 사방 균일한 흰 선이 아니다 */
-    inset 0 -1.7px 0 rgba(118,88,56,.26),
-    inset -1.7px 0 0 rgba(118,88,56,.20),
-    /* 두께. 위에서 번져 들어오고 아래에서 그늘진다 */
-    inset 0 24px 38px -28px rgba(255,255,255,.92),
-    inset 0 -28px 48px -32px rgba(96,70,44,.34),
-    /* 떠 있다 */
-    0 36px 84px -34px rgba(62,40,16,.44),
-    0 7px 20px -11px rgba(62,40,16,.18);
-  animation:up .72s var(--ease-out) backwards}
-.card > *{position:relative;z-index:3}
-
-/* 🔒 11/09 대표 「가운데 로그인하는 부분은 주황색 유지하고 그 바깥을 없애라」
-   주황은 카드 안에만 있다. overflow:hidden + border-radius:inherit 로
-   카드 모양에 맞춰 잘리므로 바깥으로 한 점도 새지 않는다.
-   유리의 빛(::before)과 테두리(::after) 아래에 깔려서 유리 너머로 비친다 */
-/* 🔵🔵 움직이지 않는 따뜻한 바탕. 웅덩이가 멀리 가 있어도 카드가 밋밋해지지 않는다 */
-.card > .glow{position:absolute;inset:0;z-index:0;border-radius:inherit;
-  overflow:hidden;pointer-events:none;
-  background:radial-gradient(128% 104% at 50% 2%,
-    rgba(255,150,38,.30), rgba(255,150,38,.11) 54%, rgba(255,150,38,0) 86%)}
-
-/* 🔴🔴 전에는 150% x 128% 였다. 카드보다 커서 화면을 꽉 채우니
-   아무리 옮겨도 그림이 그대로였다. 카드보다 작게 줄여야 「돌아다니는」 게 보인다 */
-.glow::before,.glow::after{content:"";position:absolute;display:block;
+/* 움직이는 빛 웅덩이. 전에는 카드 안에 있었는데 바탕으로 옮겼다.
+   🔵 덩어리는 그릇보다 작아야 움직이는 게 보인다. 여기서 그릇은 화면이다 */
+.bg::before,.bg::after{content:"";position:absolute;display:block;
   will-change:transform,opacity}
-.glow::before{width:104%;height:88%;left:-13%;top:-19%;filter:blur(21px);
+.bg::before{width:80%;height:68%;left:-9%;top:-15%;filter:blur(64px);
   background:radial-gradient(closest-side,
-    rgba(255,150,38,.74), rgba(255,150,38,.22) 50%, rgba(255,150,38,0) 74%);
+    rgba(255,208,126,.66), rgba(255,208,126,.20) 52%, rgba(255,208,126,0) 76%);
   animation:liqA 11s ease-in-out infinite}
-.glow::after{width:88%;height:74%;right:-15%;bottom:-13%;filter:blur(23px);
+.bg::after{width:72%;height:60%;right:-11%;bottom:-11%;filter:blur(70px);
   background:radial-gradient(closest-side,
-    rgba(255,104,0,.48), rgba(255,104,0,.13) 52%, rgba(255,104,0,0) 74%);
+    rgba(100,26,0,.56), rgba(100,26,0,.17) 54%, rgba(100,26,0,0) 76%);
   animation:liqB 15s ease-in-out infinite}
-
-/* 🔒 「유리의 비친 뒤에도 같이 일렁거리게」
-   유리에 비친 빛 한 줄. 주황 위를 비스듬히 쓸고 지나간다.
-   soft-light 라서 주황을 덮지 않고 머금어 밝힌다 */
-.glow i{position:absolute;display:block;left:-26%;top:-34%;width:106%;height:168%;
+/* 바탕 위를 쓸고 가는 빛 한 줄 */
+.bg i{position:absolute;display:block;left:-18%;top:-26%;width:88%;height:152%;
   background:linear-gradient(104deg,
-    rgba(255,255,255,0) 34%,
-    rgba(255,238,214,.50) 45%,
-    rgba(255,255,255,.74) 50%,
-    rgba(255,232,200,.34) 55%,
+    rgba(255,255,255,0) 34%, rgba(255,242,218,.34) 45%,
+    rgba(255,255,255,.46) 50%, rgba(255,238,210,.22) 55%,
     rgba(255,255,255,0) 66%);
-  filter:blur(9px);mix-blend-mode:soft-light;
+  filter:blur(20px);mix-blend-mode:soft-light;
   will-change:transform,opacity;
   animation:liqC 8.5s ease-in-out infinite}
 
-/* 🔵 주기가 11·15·8.5·7 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다.
-   이동 거리는 자기 너비의 15% 안팎. 전(5.5%)의 세 배 가까이다 */
+/* 🔵 주기가 11·15·8.5·7 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다 */
 @keyframes liqA{
   0%  {transform:translate3d(0,0,0) scale(1);opacity:.78}
   26% {transform:translate3d(16%,11%,0) scale(1.16);opacity:1}
@@ -134,151 +91,75 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
 @keyframes liqS{
   0%,100%{opacity:.64}
   50%    {opacity:1}}
+/* 🔴 11/09 찾음 : 이 키프레임이 아예 없어서 등장 움직임이 한 번도 안 돌았다 */
+@keyframes up{
+  from{opacity:0;transform:translateY(14px) scale(.985)}
+  to  {opacity:1;transform:none}}
+
+/* ═══ 카드 = 맑은 유리 ═════════════════════════════════════════
+   🔵🔵 뷰포트에 직접 못 박는다. 본문 높이나 스크롤과 상관이 없다 */
+.card{position:fixed;inset:0;margin:auto;height:fit-content;
+  z-index:1;width:min(366px,calc(100% - 40px));
+  padding:clamp(30px,4.6vw,42px) clamp(22px,3.8vw,32px) clamp(24px,3.6vw,31px);
+  border-radius:30px;text-align:center;border:0;isolation:isolate;color:#fff;
+  /* 사진 속 알약처럼 거의 맑다. 빛을 받는 쪽만 밝다 */
+  background:linear-gradient(142deg,
+    rgba(255,255,255,.30) 0%,
+    rgba(255,255,255,.15) 26%,
+    rgba(255,255,255,.08) 52%,
+    rgba(255,255,255,.11) 76%,
+    rgba(255,255,255,.21) 100%);
+  -webkit-backdrop-filter:blur(13px) saturate(142%);
+  backdrop-filter:blur(13px) saturate(142%);
+  box-shadow:
+    inset 0 1.7px 0 rgba(255,255,255,.94),
+    inset 1.7px 0 0 rgba(255,255,255,.62),
+    inset 0 -1.7px 0 rgba(255,255,255,.38),
+    inset -1.7px 0 0 rgba(255,255,255,.32),
+    inset 0 22px 36px -26px rgba(255,255,255,.68),
+    inset 0 -26px 46px -30px rgba(86,26,0,.46),
+    0 34px 80px -30px rgba(62,18,0,.55),
+    0 6px 18px -10px rgba(62,18,0,.28);
+  animation:up .72s var(--ease-out) backwards}
+.card > *{position:relative;z-index:3}
+
+/* 🔵 흰 글씨가 읽히게 하는 어두운 웅덩이.
+   테두리에서 15px 물러나 있어 가장자리는 맑은 유리로 남는다.
+   사진 속 알약도 가운데만 색이 있고 테두리는 맑다 */
+.card > .tint{position:absolute;inset:15px;z-index:0;border-radius:18px;
+  pointer-events:none;
+  background:radial-gradient(90% 100% at 50% 42%,
+    rgba(48,10,0,.95), rgba(48,10,0,.70) 56%, rgba(48,10,0,.17) 86%, rgba(48,10,0,0) 100%);
+  filter:blur(11px)}
 
 /* 표면을 비스듬히 스치는 긴 하이라이트 한 줄 */
 .card::before{content:"";position:absolute;inset:0;z-index:1;
   border-radius:inherit;pointer-events:none;overflow:hidden;
   background:linear-gradient(118deg,
-    rgba(255,255,255,0) 26%,
-    rgba(255,255,255,.34) 37%,
-    rgba(255,255,255,.52) 42%,
-    rgba(255,255,255,.16) 47%,
-    rgba(255,255,255,0) 56%);
-  opacity:.9;mix-blend-mode:soft-light;
+    rgba(255,255,255,0) 31%,
+    rgba(255,255,255,.10) 39%,
+    rgba(255,255,255,.17) 42.5%,
+    rgba(255,255,255,.05) 46%,
+    rgba(255,255,255,0) 53%);
+  opacity:.75;mix-blend-mode:soft-light;
   animation:liqS 7s ease-in-out infinite}
 
-/* 테두리 선. 빛 드는 쪽만 살고 반대쪽은 사라진다 */
+/* 유리 두께가 만드는 테두리 실선 */
 .card::after{content:"";position:absolute;inset:0;z-index:2;
   border-radius:inherit;pointer-events:none;padding:1.5px;
-  background:linear-gradient(143deg,
+  background:linear-gradient(142deg,
     rgba(255,255,255,1) 0%,
-    rgba(255,255,255,.58) 14%,
-    rgba(255,255,255,.14) 36%,
-    rgba(255,255,255,0) 58%,
-    rgba(120,90,58,.16) 84%,
-    rgba(120,90,58,.26) 100%);
+    rgba(255,255,255,.64) 16%,
+    rgba(255,255,255,.20) 40%,
+    rgba(255,255,255,.32) 62%,
+    rgba(255,238,212,.74) 86%,
+    rgba(255,255,255,.96) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude}
 
-.logo{display:block;width:clamp(94px,27%,114px);height:auto;margin:0 auto}
-
-/* 🔒 11/09 대표 「화면 최하단 가운데에 로고 작게 하나 더」
-   카드와 같은 방식으로 뷰포트에 못 박는다. 아래 안전영역도 피한다 */
-.mark{position:fixed;left:0;right:0;bottom:max(24px,env(safe-area-inset-bottom,0px));
-  z-index:1;width:68px;height:auto;margin:0 auto;display:block;
-  opacity:.78;pointer-events:none;
-  animation:up .72s var(--ease-out) .12s backwards}
-
-.say{margin:clamp(17px,3vw,23px) 0 0;font-size:13.2px;line-height:1.72;
-  letter-spacing:-.028em;color:var(--ink-2);text-wrap:pretty;
-  text-shadow:0 1px 0 rgba(255,255,255,.5)}
-
-form{margin-top:clamp(17px,2.8vw,22px);display:flex;flex-direction:column;gap:9px}
-/* 🔵🔵 여기부터는 흐림을 쓰지 않는다. 유리 위에 유리를 또 흐리면 뒤가 죽는다.
-   그라데이션과 안쪽 그림자만으로 두께를 만든다 */
-input,button{height:47px;border:0;border-radius:999px;
-  font-family:inherit;font-size:14px;color:var(--ink);
-  transition:transform .18s var(--ease),box-shadow .22s var(--ease),background-color .22s var(--ease)}
-
-input{width:100%;padding:0 18px;letter-spacing:.02em;text-align:center;outline:0;
-  background:linear-gradient(143deg,rgba(255,255,255,.78),rgba(255,255,255,.40) 62%,rgba(124,94,62,.06));
-  box-shadow:
-    inset 0 1.4px 0 rgba(255,255,255,1),
-    inset 1.4px 0 0 rgba(255,255,255,.7),
-    inset 0 -1.4px 0 rgba(118,88,56,.18),
-    inset 0 10px 18px -12px rgba(122,82,40,.14)}
-input::placeholder{color:var(--ink-3);letter-spacing:-.02em}
-input:focus{background:linear-gradient(to bottom,rgba(255,255,255,.88),rgba(255,255,255,.62));
-  box-shadow:
-    inset 0 1.4px 0 rgba(255,255,255,1),
-    inset 0 -1.4px 0 rgba(255,255,255,.6),
-    0 0 0 3.5px rgba(255,140,0,.20)}
-
-/* 「열람하기」 도 유리다. 글자만 또렷하게 */
-/* 🔒 대표 「채도 높은 2D 말고 은은하게 유리처럼」
-   → 연기 낀 짙은 유리. 속이 비치되 무게가 있다. 글자 대비는 흰 글자로 확보한다 */
-/* 🔴 11/09 대표 「너무 까매서 배경이 전혀 안비친다」
-   알파가 .80~.94 였다. 거의 불투명이라 유리로 안 보였다.
-   .56~.78 로 낮추고 뒤를 번지게 해서, 주황이 검은 유리 너머로 비쳐 보이게 한다.
-   글자는 흰색 + 그림자로 지킨다. 뒤가 가장 밝은 순간에도 4.5:1 위다 */
-button{position:relative;cursor:pointer;letter-spacing:-.02em;color:#FFF8F0;
-  background:linear-gradient(143deg,rgba(62,46,30,.56),rgba(28,20,13,.70) 56%,rgba(14,9,6,.78));
-  -webkit-backdrop-filter:blur(7px) saturate(146%);
-  backdrop-filter:blur(7px) saturate(146%);
-  text-shadow:0 1px 2.5px rgba(26,14,2,.55);
-  box-shadow:
-    inset 0 1.7px 0 rgba(255,255,255,.46),
-    inset 1.7px 0 0 rgba(255,255,255,.20),
-    inset 0 -1.7px 0 rgba(0,0,0,.30),
-    inset -1.7px 0 0 rgba(0,0,0,.22),
-    inset 0 18px 28px -20px rgba(255,255,255,.34),
-    inset 0 -18px 30px -20px rgba(0,0,0,.40),
-    0 16px 34px -16px rgba(40,24,8,.50)}
-/* 🔵 글자 밑에만 까는 어두운 웅덩이. 양 끝은 비치는 채로 둔다.
-   z-index:-1 이라 버튼 바탕 위, 글자 아래에 깔린다 */
-button::before{content:"";position:absolute;inset:0;z-index:-1;
-  border-radius:inherit;pointer-events:none;
-  background:radial-gradient(54% 150% at 50% 50%,
-    rgba(10,6,3,.50), rgba(10,6,3,.24) 54%, rgba(10,6,3,0) 86%)}
-
-/* 버튼 표면을 스치는 빛 한 줄 */
-button::after{content:"";position:absolute;inset:0;border-radius:inherit;
-  pointer-events:none;
-  background:linear-gradient(118deg,rgba(255,255,255,0) 28%,
-    rgba(255,255,255,.13) 38%,rgba(255,255,255,.26) 43%,
-    rgba(255,255,255,.08) 48%,rgba(255,255,255,0) 58%)}
-button:hover:not(:disabled){transform:translateY(-1.5px);
-  background:linear-gradient(143deg,rgba(78,58,38,.62),rgba(36,26,17,.75) 56%,rgba(20,13,8,.82));
-  box-shadow:
-    inset 0 1.6px 0 rgba(255,255,255,.62),
-    inset 1.4px 0 0 rgba(255,255,255,.2),
-    inset -1.4px 0 0 rgba(255,255,255,.2),
-    inset 0 -1.6px 0 rgba(255,255,255,.12),
-    inset 0 14px 24px -14px rgba(255,255,255,.5),
-    inset 0 -16px 26px -16px rgba(0,0,0,.4),
-    0 20px 38px -14px rgba(40,24,8,.52)}
-button:active:not(:disabled){transform:translateY(0) scale(.992)}
-button:disabled{opacity:.55;cursor:default}
-
-.msg{min-height:16px;margin:3px 0 0;font-size:11.8px;line-height:1.45;
-  letter-spacing:-.02em;color:#C2410C;opacity:0;transition:opacity .2s var(--ease)}
-.msg.on{opacity:1}
-.msg.wait{color:var(--ink-3)}
-
-@media (prefers-reduced-motion:reduce){
-  .card,.mark,.card::before,.glow::before,.glow::after,.glow i{animation:none}
-  .glow i{opacity:.4;transform:none}
-  *{transition:none!important}
-}
-/* ═══ 유리가 빛을 꺾는다 ═══════════════════════════════════════
-   🔒 11/09 대표 「아니.. 유리재질이라니까?」 + iOS 26 사진
-   색이 아니라 **굴절**이 빠져 있었다. backdrop-filter 에 SVG 변위 필터를 건다.
-   뒤에 있는 것이 가장자리에서 실제로 휜다.
-   🔴 .lens 는 굴절이 되는 브라우저에서만 켜진다. 안 되면 아래 기본 모습 그대로다 */
-.lens .card{
-  -webkit-backdrop-filter:blur(15px) saturate(158%) url(#lgCard);
-  backdrop-filter:blur(15px) saturate(158%) url(#lgCard)}
-.lens input{
-  -webkit-backdrop-filter:blur(3px) saturate(132%) url(#lgField);
-  backdrop-filter:blur(3px) saturate(132%) url(#lgField)}
-.lens button{
-  -webkit-backdrop-filter:blur(4px) saturate(150%) url(#lgBtn);
-  backdrop-filter:blur(4px) saturate(150%) url(#lgBtn)}
-
-/* 유리 두께가 만드는 가장자리 띠. 굴절이 켜졌을 때 더 또렷하게 */
-.lens .card::after{
-  background:linear-gradient(143deg,
-    rgba(255,255,255,1) 0%,
-    rgba(255,255,255,.72) 11%,
-    rgba(255,248,236,.22) 32%,
-    rgba(255,255,255,0) 56%,
-    rgba(150,112,72,.20) 82%,
-    rgba(128,94,58,.34) 100%)}
-
-/* ② 포인터를 따라 움직이는 표면 반사.
-   유리는 보는 각도가 바뀌면 반사가 따라 움직인다 */
+/* 포인터를 따라 움직이는 표면 반사 */
 .card .lick{position:absolute;inset:0;z-index:2;border-radius:inherit;
   overflow:hidden;pointer-events:none;opacity:0;
   transition:opacity .4s var(--ease)}
@@ -289,7 +170,104 @@ button:disabled{opacity:.55;cursor:default}
     rgba(255,255,255,.52), rgba(255,255,255,.14) 44%, rgba(255,255,255,0) 72%);
   mix-blend-mode:soft-light}
 
-@media (prefers-reduced-motion:reduce){ .card .lick{display:none} }
+.logo{display:block;width:clamp(94px,27%,114px);height:auto;margin:0 auto}
+
+/* 화면 최하단 가운데 로고. 뷰포트에 못 박고 아래 안전영역을 피한다 */
+.mark{position:fixed;left:0;right:0;bottom:max(24px,env(safe-area-inset-bottom,0px));
+  z-index:1;width:68px;height:auto;margin:0 auto;display:block;
+  opacity:.84;pointer-events:none;
+  animation:up .72s var(--ease-out) .12s backwards}
+
+.say{margin:clamp(17px,3vw,23px) 0 0;font-size:13.2px;line-height:1.72;
+  letter-spacing:-.028em;color:var(--ink-2);text-wrap:pretty;
+  text-shadow:0 1px 3px rgba(58,14,0,.42)}
+
+form{margin-top:clamp(17px,2.8vw,22px);display:flex;flex-direction:column;gap:9px}
+
+/* 🔵🔵 여기부터는 흐림을 겹치지 않는다. 유리 위에 유리를 또 흐리면 뒤가 죽는다 */
+input,button{height:47px;border:0;border-radius:999px;
+  font-family:inherit;font-size:14px;color:#fff;
+  transition:transform .18s var(--ease),box-shadow .22s var(--ease),background-color .22s var(--ease)}
+
+/* 입력칸 : 옅은 주황 유리. 뒤가 비친다 */
+input{width:100%;padding:0 18px;letter-spacing:.02em;text-align:center;outline:0;
+  background:linear-gradient(142deg,rgba(92,28,2,.40),rgba(66,18,0,.53) 58%,rgba(54,14,0,.57));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.72),
+    inset 1.4px 0 0 rgba(255,255,255,.30),
+    inset 0 -1.4px 0 rgba(255,220,180,.16),
+    inset 0 10px 18px -12px rgba(40,10,0,.30)}
+input::placeholder{color:rgba(255,255,255,.72);letter-spacing:-.02em}
+input:focus{background:linear-gradient(142deg,rgba(82,24,0,.48),rgba(58,16,0,.60) 58%,rgba(46,12,0,.64));
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.88),
+    inset 0 -1.4px 0 rgba(255,220,180,.2),
+    0 0 0 3.5px rgba(255,255,255,.28)}
+
+/* 「열람하기」 : 사진 속 어두운 원처럼 짙은 유리. 뒤 주황이 비친다 */
+button{position:relative;cursor:pointer;letter-spacing:-.02em;
+  background:linear-gradient(142deg,rgba(86,26,0,.46),rgba(58,14,0,.60) 56%,rgba(40,10,0,.66));
+  text-shadow:0 1px 2.5px rgba(30,6,0,.5);
+  box-shadow:
+    inset 0 1.7px 0 rgba(255,255,255,.62),
+    inset 1.7px 0 0 rgba(255,255,255,.26),
+    inset 0 -1.7px 0 rgba(255,214,170,.18),
+    inset -1.7px 0 0 rgba(255,214,170,.14),
+    inset 0 18px 28px -20px rgba(255,255,255,.34),
+    inset 0 -18px 30px -20px rgba(28,6,0,.44),
+    0 16px 34px -16px rgba(34,8,0,.52)}
+/* 🔵 글자 밑에만 까는 어두운 웅덩이. 양 끝은 비치는 채로 둔다.
+   z-index:-1 이라 버튼 바탕 위, 글자 아래에 깔린다 */
+button::before{content:"";position:absolute;inset:0;z-index:-1;
+  border-radius:inherit;pointer-events:none;
+  background:radial-gradient(54% 150% at 50% 50%,
+    rgba(26,6,0,.46), rgba(26,6,0,.22) 54%, rgba(26,6,0,0) 86%)}
+/* 버튼 표면을 스치는 빛 한 줄 */
+button::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,0) 28%,
+    rgba(255,255,255,.14) 38%,rgba(255,255,255,.28) 43%,
+    rgba(255,255,255,.09) 48%,rgba(255,255,255,0) 58%)}
+button:hover:not(:disabled){transform:translateY(-1.5px);
+  background:linear-gradient(142deg,rgba(100,32,2,.50),rgba(70,18,0,.63) 56%,rgba(50,12,0,.69));
+  box-shadow:
+    inset 0 1.7px 0 rgba(255,255,255,.76),
+    inset 1.7px 0 0 rgba(255,255,255,.3),
+    inset 0 -1.7px 0 rgba(255,214,170,.22),
+    inset 0 18px 28px -20px rgba(255,255,255,.44),
+    inset 0 -18px 30px -20px rgba(28,6,0,.42),
+    0 20px 38px -14px rgba(34,8,0,.56)}
+button:active:not(:disabled){transform:translateY(0) scale(.992)}
+button:disabled{opacity:.6;cursor:default}
+
+.msg{min-height:16px;margin:3px 0 0;font-size:11.8px;line-height:1.45;
+  letter-spacing:-.02em;color:#FFE2C2;opacity:0;
+  text-shadow:0 1px 2px rgba(50,12,0,.5);
+  transition:opacity .2s var(--ease)}
+.msg.on{opacity:1}
+.msg.wait{color:var(--ink-3)}
+
+/* ═══ 유리가 빛을 꺾는다 ══════════════════════════════════════
+   🔒 11/09 대표 「아니.. 유리재질이라니까?」 + iOS 26 사진
+   색이 아니라 **굴절**이 빠져 있었다. backdrop-filter 에 SVG 변위 필터를 건다.
+   🔴 .lens 는 굴절이 되는 브라우저에서만 켜진다. 안 되면 위 모습 그대로다
+   🔴 흐림이 세면 뒤를 미리 뭉개 버려서 휠 것이 안 남는다. 켜질 때 흐림을 낮춘다 */
+.lens .card{
+  -webkit-backdrop-filter:blur(4px) saturate(150%) url(#lgCard);
+  backdrop-filter:blur(4px) saturate(150%) url(#lgCard)}
+.lens input{
+  -webkit-backdrop-filter:blur(1.5px) saturate(130%) url(#lgField);
+  backdrop-filter:blur(1.5px) saturate(130%) url(#lgField)}
+.lens button{
+  -webkit-backdrop-filter:blur(2px) saturate(140%) url(#lgBtn);
+  backdrop-filter:blur(2px) saturate(140%) url(#lgBtn)}
+
+@media (prefers-reduced-motion:reduce){
+  .card,.mark,.card::before,.bg::before,.bg::after,.bg i{animation:none}
+  .bg i{opacity:.4;transform:none}
+  .card .lick{display:none}
+  *{transition:none!important}
+}
 
 </style>
 </head>
@@ -319,12 +297,12 @@ button:disabled{opacity:.55;cursor:default}
            xChannelSelector="R" yChannelSelector="G"/>
  </filter>
 </svg>
-<div class="bg" aria-hidden="true"></div>
+<div class="bg" aria-hidden="true"><i></i></div>
 
 <img class="mark" src="logo.png" alt="DANEA">
 
 <main class="card">
-  <span class="glow" aria-hidden="true"><i></i></span>
+  <span class="tint" aria-hidden="true"></span>
   <span class="lick" aria-hidden="true"></span>
   <img class="logo" src="logo.png" alt="DANEA">
   <p class="say">소개서 열람을 위해<br>전달받은 비밀번호를 입력해주세요</p>
@@ -452,9 +430,9 @@ button:disabled{opacity:.55;cursor:default}
   }
 
   function build(){
-    fit(document.querySelector('.card'), 'mCard', 'dCard', 28, 26, 2.1, 17);
-    fit(document.getElementById('pw'),   'mField','dField','pill', 13, 1.9, 10);
-    fit(document.getElementById('go'),   'mBtn',  'dBtn',  'pill', 13, 1.9, 12);
+    fit(document.querySelector('.card'), 'mCard', 'dCard', 28, 34, 1.7, 30);
+    fit(document.getElementById('pw'),   'mField','dField','pill', 16, 1.7, 15);
+    fit(document.getElementById('go'),   'mBtn',  'dBtn',  'pill', 16, 1.7, 17);
     document.documentElement.classList.add('lens');   /* 창 크기가 바뀔 때마다 또 붙지 않게 */
   }
 
