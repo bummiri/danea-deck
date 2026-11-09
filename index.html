@@ -252,15 +252,80 @@ button:disabled{opacity:.55;cursor:default}
   .glow i{opacity:.4;transform:none}
   *{transition:none!important}
 }
+/* ═══ 유리가 빛을 꺾는다 ═══════════════════════════════════════
+   🔒 11/09 대표 「아니.. 유리재질이라니까?」 + iOS 26 사진
+   색이 아니라 **굴절**이 빠져 있었다. backdrop-filter 에 SVG 변위 필터를 건다.
+   뒤에 있는 것이 가장자리에서 실제로 휜다.
+   🔴 .lens 는 굴절이 되는 브라우저에서만 켜진다. 안 되면 아래 기본 모습 그대로다 */
+.lens .card{
+  -webkit-backdrop-filter:blur(15px) saturate(158%) url(#lgCard);
+  backdrop-filter:blur(15px) saturate(158%) url(#lgCard)}
+.lens input{
+  -webkit-backdrop-filter:blur(3px) saturate(132%) url(#lgField);
+  backdrop-filter:blur(3px) saturate(132%) url(#lgField)}
+.lens button{
+  -webkit-backdrop-filter:blur(4px) saturate(150%) url(#lgBtn);
+  backdrop-filter:blur(4px) saturate(150%) url(#lgBtn)}
+
+/* 유리 두께가 만드는 가장자리 띠. 굴절이 켜졌을 때 더 또렷하게 */
+.lens .card::after{
+  background:linear-gradient(143deg,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,.72) 11%,
+    rgba(255,248,236,.22) 32%,
+    rgba(255,255,255,0) 56%,
+    rgba(150,112,72,.20) 82%,
+    rgba(128,94,58,.34) 100%)}
+
+/* ② 포인터를 따라 움직이는 표면 반사.
+   유리는 보는 각도가 바뀌면 반사가 따라 움직인다 */
+.card .lick{position:absolute;inset:0;z-index:2;border-radius:inherit;
+  overflow:hidden;pointer-events:none;opacity:0;
+  transition:opacity .4s var(--ease)}
+.card:hover .lick,.card:focus-within .lick{opacity:1}
+.lick::before{content:"";position:absolute;width:150%;height:150%;
+  left:var(--lx,50%);top:var(--ly,50%);transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,
+    rgba(255,255,255,.52), rgba(255,255,255,.14) 44%, rgba(255,255,255,0) 72%);
+  mix-blend-mode:soft-light}
+
+@media (prefers-reduced-motion:reduce){ .card .lick{display:none} }
+
 </style>
 </head>
 <body>
+<!-- 🔵 굴절 필터 셋. href 와 scale 은 화면에서 요소를 재어 채운다 -->
+<svg width="0" height="0" aria-hidden="true" focusable="false"
+     style="position:fixed;left:-1px;top:-1px;opacity:0;pointer-events:none">
+ <filter id="lgCard" x="0" y="0" width="100%" height="100%"
+         primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feImage id="mCard" x="0" y="0" width="100%" height="100%"
+           preserveAspectRatio="none" result="m"/>
+  <feDisplacementMap id="dCard" in="SourceGraphic" in2="m" scale="0"
+           xChannelSelector="R" yChannelSelector="G"/>
+ </filter>
+ <filter id="lgField" x="0" y="0" width="100%" height="100%"
+         primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feImage id="mField" x="0" y="0" width="100%" height="100%"
+           preserveAspectRatio="none" result="m"/>
+  <feDisplacementMap id="dField" in="SourceGraphic" in2="m" scale="0"
+           xChannelSelector="R" yChannelSelector="G"/>
+ </filter>
+ <filter id="lgBtn" x="0" y="0" width="100%" height="100%"
+         primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feImage id="mBtn" x="0" y="0" width="100%" height="100%"
+           preserveAspectRatio="none" result="m"/>
+  <feDisplacementMap id="dBtn" in="SourceGraphic" in2="m" scale="0"
+           xChannelSelector="R" yChannelSelector="G"/>
+ </filter>
+</svg>
 <div class="bg" aria-hidden="true"></div>
 
 <img class="mark" src="logo.png" alt="DANEA">
 
 <main class="card">
   <span class="glow" aria-hidden="true"><i></i></span>
+  <span class="lick" aria-hidden="true"></span>
   <img class="logo" src="logo.png" alt="DANEA">
   <p class="say">소개서 열람을 위해<br>전달받은 비밀번호를 입력해주세요</p>
   <form id="f" autocomplete="off">
@@ -325,6 +390,89 @@ button:disabled{opacity:.55;cursor:default}
 
   pw.addEventListener('input', function(){ if(m.textContent) say(''); });
   setTimeout(function(){ pw.focus(); }, 160);
+})();
+
+/* ═══ 유리가 빛을 꺾게 한다 ═════════════════════════════════════
+   feDisplacementMap 은 이렇게 읽는다.
+     어떤 자리를 그릴 때 지도의 같은 자리에서 R·G 를 보고
+       sample = (x + scale*(R-0.5), y + scale*(G-0.5))
+     회색(128,128)이면 안 휜다.
+   진짜 유리는 가운데가 평평하고 **가장자리에서만** 꺾인다.
+   그래서 지도도 가운데는 회색, 테두리 안쪽 좁은 띠에서만 바깥쪽으로 세진다. */
+(function(){
+  var ua = navigator.userAgent;
+  /* 🔴 backdrop-filter 안의 SVG 필터는 크로미엄에서만 돈다.
+     사파리·파이어폭스는 통째로 무시해서 흐림까지 날아갈 수 있으므로 아예 안 건다.
+     iOS 의 크롬·파폭(CriOS·FxiOS)은 속이 사파리라 뺀다 */
+  if(!/Chrom(e|ium)|Edg\/|OPR\//.test(ua) || /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua)) return;
+  var cv = document.createElement('canvas');
+  if(!cv.getContext || !cv.getContext('2d')) return;
+
+  function sdf(x, y, w, h, r){           /* 둥근 네모까지의 거리. 안쪽이 음수 */
+    var qx = Math.abs(x - w/2) - (w/2 - r), qy = Math.abs(y - h/2) - (h/2 - r);
+    var ax = qx > 0 ? qx : 0, ay = qy > 0 ? qy : 0;
+    return Math.sqrt(ax*ax + ay*ay) + Math.min(Math.max(qx, qy), 0) - r;
+  }
+
+  function draw(w, h, r, band, pow){
+    w = Math.max(8, Math.round(w)); h = Math.max(8, Math.round(h));
+    r = Math.min(r, Math.min(w, h)/2);
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var g = c.getContext('2d'), im = g.createImageData(w, h), d = im.data;
+    for(var y = 0; y < h; y++) for(var x = 0; x < w; x++){
+      var i = (y*w + x)*4, R = 128, G = 128;
+      var sv = sdf(x+.5, y+.5, w, h, r);
+      if(sv < 0){
+        var t = -sv / band;
+        if(t < 1){
+          var wt = Math.pow(1 - t, pow);
+          var gx = sdf(x+1.5, y+.5, w, h, r) - sdf(x-.5, y+.5, w, h, r);
+          var gy = sdf(x+.5, y+1.5, w, h, r) - sdf(x+.5, y-.5, w, h, r);
+          var n = Math.sqrt(gx*gx + gy*gy);
+          if(n > 1e-6){ R = 128 + (gx/n)*wt*127; G = 128 + (gy/n)*wt*127; }
+        }
+      }
+      d[i] = R; d[i+1] = G; d[i+2] = 128; d[i+3] = 255;
+    }
+    g.putImageData(im, 0, 0);
+    return c.toDataURL('image/png');
+  }
+
+  var NS = 'http://www.w3.org/1999/xlink';
+  function fit(el, mapId, dispId, radius, band, pow, scale){
+    if(!el) return;
+    var b = el.getBoundingClientRect();
+    if(b.width < 8 || b.height < 8) return;
+    var r = radius === 'pill' ? b.height/2 : radius;
+    var url = draw(b.width, b.height, r, band, pow);
+    var im = document.getElementById(mapId);
+    im.setAttributeNS(NS, 'xlink:href', url);
+    im.setAttribute('href', url);
+    document.getElementById(dispId).setAttribute('scale', scale);
+  }
+
+  function build(){
+    fit(document.querySelector('.card'), 'mCard', 'dCard', 28, 26, 2.1, 17);
+    fit(document.getElementById('pw'),   'mField','dField','pill', 13, 1.9, 10);
+    fit(document.getElementById('go'),   'mBtn',  'dBtn',  'pill', 13, 1.9, 12);
+    document.documentElement.classList.add('lens');   /* 창 크기가 바뀔 때마다 또 붙지 않게 */
+  }
+
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+  else build();
+  var tm; addEventListener('resize', function(){
+    clearTimeout(tm); tm = setTimeout(build, 180);
+  });
+
+  /* ② 포인터를 따라 움직이는 표면 반사 */
+  var card = document.querySelector('.card'), lick = document.querySelector('.lick');
+  if(card && lick && matchMedia('(hover:hover)').matches){
+    card.addEventListener('pointermove', function(e){
+      var b = card.getBoundingClientRect();
+      lick.style.setProperty('--lx', ((e.clientX - b.left)/b.width*100).toFixed(1) + '%');
+      lick.style.setProperty('--ly', ((e.clientY - b.top)/b.height*100).toFixed(1) + '%');
+    });
+  }
 })();
 </script>
 </body>
