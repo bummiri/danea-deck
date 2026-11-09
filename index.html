@@ -86,10 +86,10 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
      버튼이 유리로 보인다. 전에는 위쪽에만 몰려 있었다 */
   background:
     radial-gradient(116% 92% at 50% 4%,
-      rgba(255,150,38,.34), rgba(255,150,38,.16) 56%, rgba(255,150,38,.05) 88%),
+      rgba(255,150,38,.092), rgba(255,150,38,.043) 56%, rgba(255,150,38,.014) 88%),
     linear-gradient(168deg,
-      rgba(255,164,56,.06) 0%, rgba(255,140,24,.15) 52%,
-      rgba(246,120,10,.21) 78%, rgba(232,104,2,.25) 100%)}
+      rgba(255,164,56,.016) 0%, rgba(255,140,24,.040) 52%,
+      rgba(246,120,10,.057) 78%, rgba(232,104,2,.068) 100%)}
 
 /* 🔴🔴 전에는 150% x 128% 였다. 카드보다 커서 화면을 꽉 채우니
    아무리 옮겨도 그림이 그대로였다. 카드보다 작게 줄여야 「돌아다니는」 게 보인다 */
@@ -97,11 +97,11 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
   will-change:transform,opacity}
 .glow::before{width:104%;height:88%;left:-13%;top:-19%;filter:blur(21px);
   background:radial-gradient(closest-side,
-    rgba(255,150,38,.74), rgba(255,150,38,.22) 50%, rgba(255,150,38,0) 74%);
+    rgba(255,150,38,.20), rgba(255,150,38,.06) 50%, rgba(255,150,38,0) 74%);
   animation:liqA 11s ease-in-out infinite}
 .glow::after{width:88%;height:74%;right:-15%;bottom:-13%;filter:blur(23px);
   background:radial-gradient(closest-side,
-    rgba(255,104,0,.48), rgba(255,104,0,.13) 52%, rgba(255,104,0,0) 74%);
+    rgba(255,104,0,.13), rgba(255,104,0,.035) 52%, rgba(255,104,0,0) 74%);
   animation:liqB 15s ease-in-out infinite}
 
 /* 🔒 「유리의 비친 뒤에도 같이 일렁거리게」
