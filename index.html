@@ -78,18 +78,24 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
    주황은 카드 안에만 있다. overflow:hidden + border-radius:inherit 로
    카드 모양에 맞춰 잘리므로 바깥으로 한 점도 새지 않는다.
    유리의 빛(::before)과 테두리(::after) 아래에 깔려서 유리 너머로 비친다 */
+/* 🔵🔵 움직이지 않는 따뜻한 바탕. 웅덩이가 멀리 가 있어도 카드가 밋밋해지지 않는다 */
 .card > .glow{position:absolute;inset:0;z-index:0;border-radius:inherit;
-  overflow:hidden;pointer-events:none}
+  overflow:hidden;pointer-events:none;
+  background:radial-gradient(128% 104% at 50% 2%,
+    rgba(255,150,38,.30), rgba(255,150,38,.11) 54%, rgba(255,150,38,0) 86%)}
+
+/* 🔴🔴 전에는 150% x 128% 였다. 카드보다 커서 화면을 꽉 채우니
+   아무리 옮겨도 그림이 그대로였다. 카드보다 작게 줄여야 「돌아다니는」 게 보인다 */
 .glow::before,.glow::after{content:"";position:absolute;display:block;
   will-change:transform,opacity}
-.glow::before{width:150%;height:128%;left:-20%;top:-40%;filter:blur(24px);
+.glow::before{width:104%;height:88%;left:-13%;top:-19%;filter:blur(21px);
   background:radial-gradient(closest-side,
-    rgba(255,150,38,.62), rgba(255,150,38,.18) 52%, rgba(255,150,38,0) 76%);
-  animation:liqA 21s ease-in-out infinite}
-.glow::after{width:128%;height:108%;right:-30%;bottom:-34%;filter:blur(26px);
+    rgba(255,150,38,.74), rgba(255,150,38,.22) 50%, rgba(255,150,38,0) 74%);
+  animation:liqA 11s ease-in-out infinite}
+.glow::after{width:88%;height:74%;right:-15%;bottom:-13%;filter:blur(23px);
   background:radial-gradient(closest-side,
-    rgba(255,104,0,.34), rgba(255,104,0,.09) 54%, rgba(255,104,0,0) 76%);
-  animation:liqB 26s ease-in-out infinite}
+    rgba(255,104,0,.48), rgba(255,104,0,.13) 52%, rgba(255,104,0,0) 74%);
+  animation:liqB 15s ease-in-out infinite}
 
 /* 🔒 「유리의 비친 뒤에도 같이 일렁거리게」
    유리에 비친 빛 한 줄. 주황 위를 비스듬히 쓸고 지나간다.
@@ -103,27 +109,28 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
     rgba(255,255,255,0) 66%);
   filter:blur(9px);mix-blend-mode:soft-light;
   will-change:transform,opacity;
-  animation:liqC 17s ease-in-out infinite}
+  animation:liqC 8.5s ease-in-out infinite}
 
-/* 🔵 주기가 21·26·17·13 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다 */
+/* 🔵 주기가 11·15·8.5·7 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다.
+   이동 거리는 자기 너비의 15% 안팎. 전(5.5%)의 세 배 가까이다 */
 @keyframes liqA{
-  0%  {transform:translate3d(0,0,0) scale(1);opacity:.92}
-  28% {transform:translate3d(5.5%,3.5%,0) scale(1.07);opacity:1}
-  56% {transform:translate3d(-3%,6.5%,0) scale(.97);opacity:.84}
-  80% {transform:translate3d(-5.5%,-2.5%,0) scale(1.04);opacity:.96}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:.92}}
+  0%  {transform:translate3d(0,0,0) scale(1);opacity:.78}
+  26% {transform:translate3d(16%,11%,0) scale(1.16);opacity:1}
+  52% {transform:translate3d(-9%,19%,0) scale(.9);opacity:.62}
+  78% {transform:translate3d(-17%,-7%,0) scale(1.1);opacity:.92}
+  100%{transform:translate3d(0,0,0) scale(1);opacity:.78}}
 @keyframes liqB{
-  0%  {transform:translate3d(0,0,0) scale(1);opacity:.86}
-  32% {transform:translate3d(-6%,-4%,0) scale(1.09);opacity:1}
-  61% {transform:translate3d(4%,-6%,0) scale(.95);opacity:.76}
-  84% {transform:translate3d(6%,3%,0) scale(1.05);opacity:.9}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:.86}}
+  0%  {transform:translate3d(0,0,0) scale(1);opacity:.7}
+  30% {transform:translate3d(-18%,-12%,0) scale(1.2);opacity:.98}
+  58% {transform:translate3d(13%,-19%,0) scale(.88);opacity:.52}
+  82% {transform:translate3d(19%,9%,0) scale(1.12);opacity:.84}
+  100%{transform:translate3d(0,0,0) scale(1);opacity:.7}}
 @keyframes liqC{
-  0%  {transform:translate3d(-15%,9%,0) rotate(-6deg);opacity:0}
-  20% {opacity:.52}
-  50% {transform:translate3d(11%,-7%,0) rotate(5deg);opacity:.78}
-  80% {opacity:.44}
-  100%{transform:translate3d(-15%,9%,0) rotate(-6deg);opacity:0}}
+  0%  {transform:translate3d(-34%,20%,0) rotate(-9deg);opacity:0}
+  18% {opacity:.62}
+  50% {transform:translate3d(26%,-17%,0) rotate(8deg);opacity:.92}
+  82% {opacity:.5}
+  100%{transform:translate3d(-34%,20%,0) rotate(-9deg);opacity:0}}
 @keyframes liqS{
   0%,100%{opacity:.64}
   50%    {opacity:1}}
@@ -138,7 +145,7 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
     rgba(255,255,255,.16) 47%,
     rgba(255,255,255,0) 56%);
   opacity:.9;mix-blend-mode:soft-light;
-  animation:liqS 13s ease-in-out infinite}
+  animation:liqS 7s ease-in-out infinite}
 
 /* 테두리 선. 빛 드는 쪽만 살고 반대쪽은 사라진다 */
 .card::after{content:"";position:absolute;inset:0;z-index:2;
@@ -192,8 +199,15 @@ input:focus{background:linear-gradient(to bottom,rgba(255,255,255,.88),rgba(255,
 /* 「열람하기」 도 유리다. 글자만 또렷하게 */
 /* 🔒 대표 「채도 높은 2D 말고 은은하게 유리처럼」
    → 연기 낀 짙은 유리. 속이 비치되 무게가 있다. 글자 대비는 흰 글자로 확보한다 */
+/* 🔴 11/09 대표 「너무 까매서 배경이 전혀 안비친다」
+   알파가 .80~.94 였다. 거의 불투명이라 유리로 안 보였다.
+   .56~.78 로 낮추고 뒤를 번지게 해서, 주황이 검은 유리 너머로 비쳐 보이게 한다.
+   글자는 흰색 + 그림자로 지킨다. 뒤가 가장 밝은 순간에도 4.5:1 위다 */
 button{position:relative;cursor:pointer;letter-spacing:-.02em;color:#FFF8F0;
-  background:linear-gradient(143deg,rgba(66,50,34,.80),rgba(30,22,15,.90) 58%,rgba(16,11,7,.94));
+  background:linear-gradient(143deg,rgba(62,46,30,.56),rgba(28,20,13,.70) 56%,rgba(14,9,6,.78));
+  -webkit-backdrop-filter:blur(7px) saturate(146%);
+  backdrop-filter:blur(7px) saturate(146%);
+  text-shadow:0 1px 2.5px rgba(26,14,2,.55);
   box-shadow:
     inset 0 1.7px 0 rgba(255,255,255,.46),
     inset 1.7px 0 0 rgba(255,255,255,.20),
@@ -202,13 +216,21 @@ button{position:relative;cursor:pointer;letter-spacing:-.02em;color:#FFF8F0;
     inset 0 18px 28px -20px rgba(255,255,255,.34),
     inset 0 -18px 30px -20px rgba(0,0,0,.40),
     0 16px 34px -16px rgba(40,24,8,.50)}
+/* 🔵 글자 밑에만 까는 어두운 웅덩이. 양 끝은 비치는 채로 둔다.
+   z-index:-1 이라 버튼 바탕 위, 글자 아래에 깔린다 */
+button::before{content:"";position:absolute;inset:0;z-index:-1;
+  border-radius:inherit;pointer-events:none;
+  background:radial-gradient(54% 150% at 50% 50%,
+    rgba(10,6,3,.50), rgba(10,6,3,.24) 54%, rgba(10,6,3,0) 86%)}
+
 /* 버튼 표면을 스치는 빛 한 줄 */
 button::after{content:"";position:absolute;inset:0;border-radius:inherit;
   pointer-events:none;
-  background:linear-gradient(118deg,rgba(255,255,255,0) 30%,
-    rgba(255,255,255,.16) 42%,rgba(255,255,255,0) 54%)}
+  background:linear-gradient(118deg,rgba(255,255,255,0) 28%,
+    rgba(255,255,255,.13) 38%,rgba(255,255,255,.26) 43%,
+    rgba(255,255,255,.08) 48%,rgba(255,255,255,0) 58%)}
 button:hover:not(:disabled){transform:translateY(-1.5px);
-  background:linear-gradient(143deg,rgba(84,64,44,.82),rgba(40,30,20,.91) 58%,rgba(22,15,10,.95));
+  background:linear-gradient(143deg,rgba(78,58,38,.62),rgba(36,26,17,.75) 56%,rgba(20,13,8,.82));
   box-shadow:
     inset 0 1.6px 0 rgba(255,255,255,.62),
     inset 1.4px 0 0 rgba(255,255,255,.2),
