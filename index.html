@@ -70,7 +70,8 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
     inset 0 -28px 48px -32px rgba(96,70,44,.34),
     /* 떠 있다 */
     0 36px 84px -34px rgba(62,40,16,.44),
-    0 7px 20px -11px rgba(62,40,16,.18);
+    0 7px 20px -11px rgba(62,40,16,.18),
+    0 0 90px -16px rgba(236,140,60,.34);
   animation:up .72s var(--ease-out) backwards}
 .card > *{position:relative;z-index:3}
 
@@ -78,81 +79,31 @@ body{margin:0;background:#F3EFEA;color:var(--ink);
    주황은 카드 안에만 있다. overflow:hidden + border-radius:inherit 로
    카드 모양에 맞춰 잘리므로 바깥으로 한 점도 새지 않는다.
    유리의 빛(::before)과 테두리(::after) 아래에 깔려서 유리 너머로 비친다 */
-/* 🔵🔵 움직이지 않는 따뜻한 바탕. 웅덩이가 멀리 가 있어도 카드가 밋밋해지지 않는다 */
+/* 🔒 11/13 대표 「선이 그어지면서 움직이는 것 말고, 레퍼런스 같은 재질과 색감으로
+   랜덤하게 천천히」 → 쓸고 지나가는 빛줄기를 뺐다.
+   색 덩어리 넷(에스프레소 · 번트 오렌지 · 틸 그레이 · 피치)이 카드 안에서
+   제 구역 안의 임의 지점으로 14~24초에 걸쳐 천천히 옮겨 간다. 위에 입자(grain)를 얹어 젖빛 유리 질감을 낸다.
+   🔴 어두운 덩어리는 위쪽 모서리 구역에만 있다. 로고와 글자 뒤로는 오지 않는다 */
 .card > .glow{position:absolute;inset:0;z-index:0;border-radius:inherit;
   overflow:hidden;pointer-events:none;
-  /* 🔒 11/09 대표 「배경에만 주황색 그라디언트」
-     유리는 뒤에 있는 것을 보여 준다. 그러니 버튼이 앉는 아래쪽까지 주황이 와야
-     버튼이 유리로 보인다. 전에는 위쪽에만 몰려 있었다 */
-  background:
-    radial-gradient(116% 92% at 50% 4%,
-      rgba(255,150,38,.092), rgba(255,150,38,.043) 56%, rgba(255,150,38,.014) 88%),
-    linear-gradient(168deg,
-      rgba(255,164,56,.016) 0%, rgba(255,140,24,.040) 52%,
-      rgba(246,120,10,.057) 78%, rgba(232,104,2,.068) 100%)}
-
-/* 🔴🔴 전에는 150% x 128% 였다. 카드보다 커서 화면을 꽉 채우니
-   아무리 옮겨도 그림이 그대로였다. 카드보다 작게 줄여야 「돌아다니는」 게 보인다 */
-.glow::before,.glow::after{content:"";position:absolute;display:block;
-  will-change:transform,opacity}
-.glow::before{width:104%;height:88%;left:-13%;top:-19%;filter:blur(21px);
-  background:radial-gradient(closest-side,
-    rgba(255,150,38,.20), rgba(255,150,38,.06) 50%, rgba(255,150,38,0) 74%);
-  animation:liqA 11s ease-in-out infinite}
-.glow::after{width:88%;height:74%;right:-15%;bottom:-13%;filter:blur(23px);
-  background:radial-gradient(closest-side,
-    rgba(255,104,0,.13), rgba(255,104,0,.035) 52%, rgba(255,104,0,0) 74%);
-  animation:liqB 15s ease-in-out infinite}
-
-/* 🔒 「유리의 비친 뒤에도 같이 일렁거리게」
-   유리에 비친 빛 한 줄. 주황 위를 비스듬히 쓸고 지나간다.
-   soft-light 라서 주황을 덮지 않고 머금어 밝힌다 */
-.glow i{position:absolute;display:block;left:-26%;top:-34%;width:106%;height:168%;
-  background:linear-gradient(104deg,
-    rgba(255,255,255,0) 34%,
-    rgba(255,238,214,.50) 45%,
-    rgba(255,255,255,.74) 50%,
-    rgba(255,232,200,.34) 55%,
-    rgba(255,255,255,0) 66%);
-  filter:blur(9px);mix-blend-mode:soft-light;
-  will-change:transform,opacity;
-  animation:liqC 8.5s ease-in-out infinite}
-
-/* 🔵 주기가 11·15·8.5·7 이라 최소공배수가 멀다. 같은 그림이 다시 오지 않는다.
-   이동 거리는 자기 너비의 15% 안팎. 전(5.5%)의 세 배 가까이다 */
-@keyframes liqA{
-  0%  {transform:translate3d(0,0,0) scale(1);opacity:.78}
-  26% {transform:translate3d(16%,11%,0) scale(1.16);opacity:1}
-  52% {transform:translate3d(-9%,19%,0) scale(.9);opacity:.62}
-  78% {transform:translate3d(-17%,-7%,0) scale(1.1);opacity:.92}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:.78}}
-@keyframes liqB{
-  0%  {transform:translate3d(0,0,0) scale(1);opacity:.7}
-  30% {transform:translate3d(-18%,-12%,0) scale(1.2);opacity:.98}
-  58% {transform:translate3d(13%,-19%,0) scale(.88);opacity:.52}
-  82% {transform:translate3d(19%,9%,0) scale(1.12);opacity:.84}
-  100%{transform:translate3d(0,0,0) scale(1);opacity:.7}}
-@keyframes liqC{
-  0%  {transform:translate3d(-34%,20%,0) rotate(-9deg);opacity:0}
-  18% {opacity:.62}
-  50% {transform:translate3d(26%,-17%,0) rotate(8deg);opacity:.92}
-  82% {opacity:.5}
-  100%{transform:translate3d(-34%,20%,0) rotate(-9deg);opacity:0}}
-@keyframes liqS{
-  0%,100%{opacity:.64}
-  50%    {opacity:1}}
-
-/* 표면을 비스듬히 스치는 긴 하이라이트 한 줄 */
-.card::before{content:"";position:absolute;inset:0;z-index:1;
-  border-radius:inherit;pointer-events:none;overflow:hidden;
-  background:linear-gradient(118deg,
-    rgba(255,255,255,0) 26%,
-    rgba(255,255,255,.34) 37%,
-    rgba(255,255,255,.52) 42%,
-    rgba(255,255,255,.16) 47%,
-    rgba(255,255,255,0) 56%);
-  opacity:.9;mix-blend-mode:soft-light;
-  animation:liqS 7s ease-in-out infinite}
+  background:linear-gradient(178deg,#EFD3B2 0%,#F6E1C6 46%,#FAEBD7 100%)}
+.glow b{position:absolute;display:block;border-radius:50%;
+  will-change:transform;filter:blur(60px);
+  transition-property:transform;transition-timing-function:cubic-bezier(.45,.05,.55,.95)}
+.glow .b1{width:140%;height:110%;left:-52%;top:-56%;
+  background:radial-gradient(closest-side,rgba(40,17,5,.96),rgba(58,26,8,.78) 24%,rgba(72,34,11,.46) 54%,rgba(80,38,13,.16) 80%,rgba(76,36,12,0) 100%)}
+.glow .b2{width:136%;height:146%;left:-66%;top:-18%;
+  background:radial-gradient(closest-side,rgba(222,96,12,.94),rgba(230,108,22,.76) 24%,rgba(238,128,40,.44) 54%,rgba(242,140,50,.14) 80%,rgba(240,134,44,0) 100%)}
+.glow .b3{width:136%;height:128%;right:-60%;top:-52%;
+  background:radial-gradient(closest-side,rgba(98,134,142,.92),rgba(116,148,154,.74) 24%,rgba(138,164,170,.42) 54%,rgba(150,172,176,.14) 80%,rgba(146,170,174,0) 100%)}
+.glow .b4{width:170%;height:120%;left:-35%;bottom:-60%;
+  background:radial-gradient(closest-side,rgba(255,238,212,.96),rgba(255,234,204,.76) 26%,rgba(255,232,200,.42) 56%,rgba(255,232,200,.14) 80%,rgba(255,232,200,0) 100%)}
+/* 글자가 앉는 가운데만 아주 옅게 밝혀 대비를 지킨다 */
+.glow::before{content:"";position:absolute;inset:0;z-index:1;
+  background:radial-gradient(62% 48% at 50% 52%,rgba(252,240,224,.34),rgba(252,240,224,0) 100%)}
+/* 젖빛 입자 */
+.glow::after{content:"";position:absolute;inset:0;z-index:2;opacity:.42;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* 테두리 선. 빛 드는 쪽만 살고 반대쪽은 사라진다 */
 .card::after{content:"";position:absolute;inset:0;z-index:2;
@@ -297,7 +248,7 @@ button:disabled{opacity:.55;cursor:default}
 <img class="mark" src="logo.png" alt="DANEA">
 
 <main class="card">
-  <span class="glow" aria-hidden="true"><i></i></span>
+  <span class="glow" aria-hidden="true"><b class="b1"></b><b class="b2"></b><b class="b3"></b><b class="b4"></b></span>
   <img class="logo" src="logo.png" alt="DANEA">
   <p class="say">소개서 열람을 위해<br>전달받은 비밀번호를 입력해주세요</p>
   <form id="f" autocomplete="off">
@@ -482,6 +433,23 @@ button:disabled{opacity:.55;cursor:default}
   /* 변위는 **화면 크기에 비례**한다. 창이 바뀌면 다시 구워야 한다 */
   var tm; addEventListener('resize', function(){
     clearTimeout(tm); tm = setTimeout(build, 180);
+  });
+})();
+
+/* 🔒 11/13 색 덩어리를 제 구역 안에서 임의로, 천천히 옮긴다 */
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var R={b1:[16,14],b2:[12,16],b3:[15,14],b4:[10,8]};   /* 자기 크기 대비 % */
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function move(el,first){
+    var r=R[el.className], t=first?0:rnd(14,24);
+    el.style.transitionDuration=t+'s';
+    el.style.transform='translate3d('+rnd(-r[0],r[0]).toFixed(1)+'%,'+rnd(-r[1],r[1]).toFixed(1)+'%,0) scale('+rnd(.9,1.16).toFixed(3)+')';
+    if(!first) setTimeout(function(){move(el);}, t*1000);
+  }
+  [].forEach.call(document.querySelectorAll('.glow b'),function(el){
+    move(el,true);
+    setTimeout(function(){move(el);}, 60);
   });
 })();
 </script>
